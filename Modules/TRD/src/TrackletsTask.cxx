@@ -212,6 +212,7 @@ void TrackletsTask::monitorData(o2::framework::ProcessingContext& ctx)
         mTrackletsPerEvent->Fill(trigger.getNumberOfTracklets());
         for (int currenttracklet = trigger.getFirstTracklet(); currenttracklet < trigger.getFirstTracklet() + trigger.getNumberOfTracklets() - 1; ++currenttracklet) {
           int detector = tracklets[currenttracklet].getDetector();
+          int side = tracklets[currenttracklet].getHCID() % 2;
           int sm = detector / 30;
           int detLoc = detector % 30;
           int layer = detector % 6;
@@ -244,7 +245,7 @@ void TrackletsTask::monitorData(o2::framework::ProcessingContext& ctx)
           }
 
           int rowGlb = istack < 3 ? tracklets[currenttracklet].getPadRow() + istack * 16 : tracklets[currenttracklet].getPadRow() + 44 + (istack - 3) * 16; // pad row within whole sector
-          int colGlb = tracklets[currenttracklet].getColumn() + sm * 8 + sm * 4;
+          int colGlb = tracklets[currenttracklet].getColumn() + sm * 8 + side * 4;
           hLayers[layer]->Fill(rowGlb, colGlb);
         }
       }
