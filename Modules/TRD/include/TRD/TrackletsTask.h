@@ -20,6 +20,8 @@
 #include "QualityControl/TaskInterface.h"
 #include "QualityControl/DatabaseInterface.h"
 #include "DataFormatsTRD/NoiseCalibration.h"
+#include "CCDB/BasicCCDBManager.h"
+#include "TRDQC/StatusHelper.h"
 
 class TH1F;
 class TH2F;
@@ -49,7 +51,9 @@ class TrackletsTask final : public TaskInterface
   void reset() override;
   void buildHistograms();
   void retrieveCCDBSettings();
-  void drawLinesMCM(TH2F* histo);
+  void drawLinesMCM(TH2F* histo, Double_t len, Int_t m);
+  void fillMaskHisto();
+  o2::trd::HalfChamberStatusQC halfChamberMask();
 
  private:
   long int mTimestamp;
@@ -68,6 +72,9 @@ class TrackletsTask final : public TaskInterface
   std::shared_ptr<TH1F> mTrackletPositionRawn = nullptr;
   std::shared_ptr<TH1F> mTrackletsPerEventn = nullptr;
   o2::trd::NoiseStatusMCM* mNoiseMap = nullptr;
+  std::array<std::shared_ptr<TH2F>, 6> hLayers;
+  std::array<std::shared_ptr<TH2F>, 6> hMask;
+  std::array<std::shared_ptr<TCanvas>, 6> c;
 };
 
 } // namespace o2::quality_control_modules::trd
