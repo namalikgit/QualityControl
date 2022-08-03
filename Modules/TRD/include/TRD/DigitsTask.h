@@ -108,7 +108,7 @@ class DigitsTask final : public TaskInterface
   std::shared_ptr<TH1F> mPulseHeightn = nullptr;
   std::shared_ptr<TProfile> mPulseHeightpro = nullptr;
   std::shared_ptr<TProfile2D> mPulseHeightperchamber = nullptr;
-  //  std::array<std::shared_ptr<TH1F>, 540> mPulseHeightPerChamber_1D; // ph2DSM;
+  std::array<std::shared_ptr<TH1F>, 540> mPulseHeightPerChamber_1D; // ph2DSM;
   std::vector<TH2F*> mLayers;
   // information pulled from ccdb
   o2::trd::NoiseStatusMCM* mNoiseMap = nullptr;

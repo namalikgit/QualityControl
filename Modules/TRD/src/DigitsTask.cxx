@@ -64,7 +64,7 @@ void DigitsTask::buildChamberIgnoreBP()
   }
   // Printing the token vector
   for (auto& token : tokens) {
-    //token now holds something like 16_3_0
+    // token now holds something like 16_3_0
     std::vector<std::string> parts;
     std::stringstream indexcheck(token);
     std::string tokenpart;
@@ -155,8 +155,8 @@ void DigitsTask::drawLinesOnPulseHeight(TH1F* h)
 
 void DigitsTask::drawHashOnLayers(int layer, int hcid, int col, int rowstart, int rowend)
 {
-  //instead of using overlays, draw a simple box in red with a cross on it.
-  std::pair<float, float> topright, bottomleft; //coordinates of box
+  // instead of using overlays, draw a simple box in red with a cross on it.
+  std::pair<float, float> topright, bottomleft; // coordinates of box
   TLine* boxlines[8];
   int det = hcid / 2;
   int side = hcid % 2;
@@ -166,15 +166,15 @@ void DigitsTask::drawHashOnLayers(int layer, int hcid, int col, int rowstart, in
   topright.first = rowend - 0.5;
   topright.second = (sec * 2 + side) * 72 + 72;
 
-  //LOG(info) << "Box for layer : " << layer << " hcid : " << hcid << ": " << bottomleft.first << ":" << bottomleft.second << "(" << bottomleft.second/144 << ") -- " << topright.first << ":" << topright.second << "(" << topright.second/144 << ")";
-  boxlines[0] = new TLine(bottomleft.first, bottomleft.second, topright.first, bottomleft.second);                                                                                     //bottom
+  // LOG(info) << "Box for layer : " << layer << " hcid : " << hcid << ": " << bottomleft.first << ":" << bottomleft.second << "(" << bottomleft.second/144 << ") -- " << topright.first << ":" << topright.second << "(" << topright.second/144 << ")";
+  boxlines[0] = new TLine(bottomleft.first, bottomleft.second, topright.first, bottomleft.second);                                                                                     // bottom
   boxlines[1] = new TLine(bottomleft.first, topright.second, topright.first, topright.second);                                                                                         // top
   boxlines[2] = new TLine(bottomleft.first, bottomleft.second, bottomleft.first, topright.second);                                                                                     // left
   boxlines[3] = new TLine(topright.first, bottomleft.second, topright.first, topright.second);                                                                                         // right
-  boxlines[4] = new TLine(bottomleft.first, topright.second - (topright.second - bottomleft.second) / 2, topright.first, topright.second - (topright.second - bottomleft.second) / 2); //horizontal middle
-  boxlines[5] = new TLine(topright.first, bottomleft.second, bottomleft.first, topright.second);                                                                                       //backslash
-  boxlines[6] = new TLine(bottomleft.first, bottomleft.second, topright.first, topright.second);                                                                                       //forwardslash
-  boxlines[7] = new TLine(bottomleft.first + (topright.first - bottomleft.first) / 2, bottomleft.second, bottomleft.first + (topright.first - bottomleft.first) / 2, topright.second); //vertical middle
+  boxlines[4] = new TLine(bottomleft.first, topright.second - (topright.second - bottomleft.second) / 2, topright.first, topright.second - (topright.second - bottomleft.second) / 2); // horizontal middle
+  boxlines[5] = new TLine(topright.first, bottomleft.second, bottomleft.first, topright.second);                                                                                       // backslash
+  boxlines[6] = new TLine(bottomleft.first, bottomleft.second, topright.first, topright.second);                                                                                       // forwardslash
+  boxlines[7] = new TLine(bottomleft.first + (topright.first - bottomleft.first) / 2, bottomleft.second, bottomleft.first + (topright.first - bottomleft.first) / 2, topright.second); // vertical middle
   for (int line = 0; line < 8; ++line) {
     boxlines[line]->SetLineColor(kBlack);
     mLayers[layer]->GetListOfFunctions()->Add(boxlines[line]);
@@ -186,7 +186,7 @@ void DigitsTask::fillLinesOnHistsPerLayer(int iLayer)
   std::bitset<1080> hciddone;
   hciddone.reset();
   if (mChamberStatus == nullptr) {
-    //protect for if the chamber status is not pulled from the ccdb for what ever reason.
+    // protect for if the chamber status is not pulled from the ccdb for what ever reason.
     ILOG(Info, Support) << "No half chamber status object to be able to fill the mask" << ENDM;
   } else {
     for (int iSec = 0; iSec < 18; ++iSec) {
@@ -295,7 +295,6 @@ void DigitsTask::buildHistograms()
     mClsTbSM[iSM].reset(new TH2F(label.c_str(), title.c_str(), 30, -0.5, 29.5, 10, 0, 200));
     getObjectsManager()->startPublishing(mClsTbSM[iSM].get());
     getObjectsManager()->setDefaultDrawOptions(mClsTbSM[iSM]->GetName(), "COLZ");
-
   }
 
   mNCls.reset(new TH1F("Cluster/NCls", "Total number of clusters per sector", 18, -0.5, 17.5));
@@ -356,27 +355,33 @@ void DigitsTask::buildHistograms()
 
   for (int count = 0; count < 18; ++count) {
     std::string label = fmt::format("PulseHeight/pulseheight2d_sm_{0:02d}", count);
+
     std::string title = fmt::format("Pulse Height Spectrum for SM {0:02d};Timebin;Counts", count);
     TH1F* h = new TH1F(label.c_str(), title.c_str(), 30, -0.5, 29.5);
     mPulseHeight2DperSM[count].reset(h);
     getObjectsManager()->startPublishing(h);
   }
 
-  /*  int cn = 0;
-  int sm = 0;
+  {
+    int cn = 0;
+    int sm = 0;
 
-  for (int count = 0; count < 540; ++count) {
-    sm = count / 30;
-    std::string label = fmt::format("PulseHeightPerChamber/pulseheight_{0:02d}_{1}_{2}", sm, cn / 6, cn % 6);
-    std::string title = fmt::format("{0:02d}_{1}_{2};Timebin;Chamber", sm, cn / 6, cn % 6);
-    TH1F* h = new TH1F(label.c_str(), title.c_str(), 30, -0.5, 29.5);
-    mPulseHeightPerChamber_1D[count].reset(h);
-    getObjectsManager()->startPublishing(h);
-    cn++;
-    if (cn > 29)
-      cn = 0;
+    for (int count = 0; count < 540; ++count) {
+      sm = count / 30;
+
+      std::string label = fmt::format("PulseHeightPerChamber/pulseheight_{0:02d}_{1}_{2}", sm, cn / 6, cn % 6);
+      std::string title = fmt::format("{0:02d}_{1}_{2};Timebin;Pulseheight", sm, cn / 6, cn % 6);
+
+      mPulseHeightPerChamber_1D[count] = std::make_shared<TH1F>(label.c_str(), title.c_str(), 30, -0.5, 29.5);
+      mPulseHeightPerChamber_1D[count]->Sumw2();
+      getObjectsManager()->startPublishing(mPulseHeightPerChamber_1D[count].get());
+
+      cn++;
+      if (cn > 29)
+        cn = 0;
+    }
   }
-*/
+
   for (int iLayer = 0; iLayer < 6; ++iLayer) {
     mLayers.push_back(new TH2F(Form("DigitsPerLayer/layer%i", iLayer), Form("Digit count per pad in layer %i;stack;sector", iLayer), 76, -0.5, 75.5, 2592, -0.5, 2591.5));
     auto xax = mLayers.back()->GetXaxis();
@@ -466,7 +471,6 @@ void DigitsTask::initialize(o2::framework::InitContext& /*ctx*/)
 
   retrieveCCDBSettings();
   buildHistograms();
-
 }
 
 void DigitsTask::startOfActivity(Activity& /*activity*/)
@@ -580,7 +584,7 @@ void DigitsTask::monitorData(o2::framework::ProcessingContext& ctx)
           if (stack >= 2)
             stackoffset -= 4; // account for stack 2 having 4 less.
           // for now the if statement is commented as there is a problem finding isShareDigit, will come back to that.
-          ///if (!digits[digitsIndex[currentdigit]].isSharedDigit() && !mSkipSharedDigits.second) {
+          /// if (!digits[digitsIndex[currentdigit]].isSharedDigit() && !mSkipSharedDigits.second) {
           int rowGlb = stack < 3 ? digits[digitsIndex[currentdigit]].getPadRow() + stack * 16 : digits[digitsIndex[currentdigit]].getPadRow() + 44 + (stack - 3) * 16; // pad row within whole sector
           int colGlb = digits[digitsIndex[currentdigit]].getPadCol() + sm * 144;                                                                                       // pad column number from 0 to NSectors * 144
           mLayers[layer]->Fill(rowGlb, colGlb);
@@ -680,7 +684,6 @@ void DigitsTask::monitorData(o2::framework::ProcessingContext& ctx)
                 mClsSector->Fill(sm, sum);
                 mClsStack->Fill(stack, sum);
 
-
                 // This is pulseheight lifted from run2, probably not what was used.
                 mClsChargeTbTigg->Fill(time, sum);
 
@@ -712,7 +715,7 @@ void DigitsTask::monitorData(o2::framework::ProcessingContext& ctx)
                       mPulseHeightpro->Fill(tb, phVal);
                       mPulseHeight2DperSM[sector]->Fill(tb, phVal);
                       mPulseHeightperchamber->Fill(tb, det1, phVal);
-                      //mPulseHeightPerChamber_1D[det1]->Fill(tb, phVal);
+                      // mPulseHeightPerChamber_1D[det1]->Fill(tb, phVal);
                       if (mNoiseMap != nullptr && !mNoiseMap->getIsNoisy(mid->getHCId(), mid->getROB(), mid->getMCM()))
                         mPulseHeightn->Fill(tb, phVal);
                     }
@@ -731,7 +734,7 @@ void DigitsTask::monitorData(o2::framework::ProcessingContext& ctx)
                       mPulseHeightpro->Fill(tb, phVal);
                       mPulseHeight2DperSM[sector]->Fill(tb, phVal);
                       mPulseHeightperchamber->Fill(tb, det1, phVal);
-                      //mPulseHeightPerChamber_1D[det1]->Fill(tb, phVal);
+                      // mPulseHeightPerChamber_1D[det1]->Fill(tb, phVal);
                       if (mNoiseMap != nullptr && !mNoiseMap->getIsNoisy(mid->getHCId(), mid->getROB(), mid->getMCM()))
                         mPulseHeightn->Fill(tb, phVal);
                     }
@@ -741,23 +744,31 @@ void DigitsTask::monitorData(o2::framework::ProcessingContext& ctx)
             }   // end if 3 pads next to each other
           }     // end for c
         }
-    }       // end for r
-  } // end for d
-  } // for loop over digits
+      } // end for r
+    }   // end for d
+  }     // for loop over digits
 } // loop over triggers
 
 void DigitsTask::endOfCycle()
 {
   ILOG(Info) << "endOfCycle" << ENDM;
   for (Int_t det = 0; det < 540; det++) {
-    mClsAmpCh->Fill(mClusterAmplitudeChamber->Integral(1, -1, det, det + 1)); //prof->GetBinContent(det));
+    mClsAmpCh->Fill(mClusterAmplitudeChamber->Integral(1, -1, det, det + 1)); // prof->GetBinContent(det));
   }
   double scale = mPulseHeight->GetEntries() / 30;
-  for (int i = 0; i < 30; ++i)
-    mPulseHeightScaled->SetBinContent(i, mPulseHeight->GetBinContent(i));
+  for (int i = 0; i < 30; ++i) {
+    mPulseHeightScaled->SetBinContent(i + 1, mPulseHeight->GetBinContent(i + 1));
+  }
   mPulseHeightScaled->Scale(1 / scale);
 
   mClsChargeTbCycle.get()->Reset();
+
+  for (int count = 0; count < 540; ++count) {
+
+    for (int i = 0; i < 30; ++i) {
+      mPulseHeightPerChamber_1D[count]->SetBinContent(i + 1, mPulseHeightperchamber.get()->GetBinContent(i + 1, count + 1));
+    }
+  }
 }
 
 void DigitsTask::endOfActivity(Activity& /*activity*/)
@@ -822,8 +833,8 @@ void DigitsTask::reset()
   mPulseHeightn.get()->Reset();
   mPulseHeightpro.get()->Reset();
   mPulseHeightperchamber.get()->Reset();
-  //  for (auto& h : mPulseHeightPerChamber_1D) {
-  //j    h->Reset();
-  //  }; // ph2DSM;
+  for (auto& h : mPulseHeightPerChamber_1D) {
+    h.get()->Reset();
+  }; // ph2DSM;
 }
 } // namespace o2::quality_control_modules::trd
