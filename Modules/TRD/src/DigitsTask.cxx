@@ -373,8 +373,11 @@ void DigitsTask::buildHistograms()
       std::string title = fmt::format("{0:02d}_{1}_{2};Timebin;Pulseheight", sm, cn / 6, cn % 6);
 
       mPulseHeightPerChamber_1D[count] = std::make_shared<TH1F>(label.c_str(), title.c_str(), 30, -0.5, 29.5);
-      mPulseHeightPerChamber_1D[count]->Sumw2();
+      mPulseHeightPerChamber_1D[count].get()->Sumw2();
+      mPulseHeightPerChamber_1D[count].get()->SetMarkerStyle(2);
+      mPulseHeightPerChamber_1D[count].get()->SetMarkerSize(2);
       getObjectsManager()->startPublishing(mPulseHeightPerChamber_1D[count].get());
+      getObjectsManager()->setDefaultDrawOptions(mPulseHeightPerChamber_1D[count].get()->GetName(), "P");
 
       cn++;
       if (cn > 29)
@@ -766,7 +769,7 @@ void DigitsTask::endOfCycle()
   for (int count = 0; count < 540; ++count) {
 
     for (int i = 0; i < 30; ++i) {
-      mPulseHeightPerChamber_1D[count]->SetBinContent(i + 1, mPulseHeightperchamber.get()->GetBinContent(i + 1, count + 1));
+      mPulseHeightPerChamber_1D[count]->SetBinContent(i + 1, mPulseHeightperchamber->GetBinContent(i + 1, count + 1));
     }
   }
 }
